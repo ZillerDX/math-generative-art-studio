@@ -12,11 +12,12 @@ import {
   Check,
   Compass,
   Atom,
-  Activity,
   Grid,
   Waves,
-  Sigma
+  Sigma,
+  Infinity
 } from "lucide-react";
+import { AxiomBrandIcon } from "./AxiomBrandIcon";
 
 interface Props {
   state: StudioState;
@@ -32,10 +33,11 @@ interface Props {
 const CATEGORIES: { id: MathCategory; label: string; icon: React.FC<{ className?: string }> }[] = [
   { id: "fractals", label: "Fractals", icon: Atom },
   { id: "parametric", label: "Parametric", icon: Compass },
-  { id: "attractors", label: "Attractors", icon: Activity },
+  { id: "attractors", label: "Attractors", icon: Infinity },
   { id: "cellular", label: "Cellular", icon: Grid },
   { id: "flowfields", label: "Flow Fields", icon: Waves }
 ];
+
 
 export const Header: React.FC<Props> = ({
   state,
@@ -60,12 +62,12 @@ export const Header: React.FC<Props> = ({
     <header className="h-18 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-xl px-5 flex items-center justify-between select-none z-30 shrink-0 shadow-lg shadow-black/30">
       {/* Brand & Logo (Left Side) */}
       <div className="flex items-center gap-3.5">
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-900/50 border border-cyan-400/30 shrink-0">
-          <Sparkles className="w-5 h-5" />
+        <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-slate-900/90 border border-cyan-500/40 shadow-lg shadow-cyan-950/60 p-2 shrink-0 group hover:border-cyan-400/80 transition-all">
+          <AxiomBrandIcon size={28} className="w-full h-full" />
         </div>
         <div className="flex flex-col whitespace-nowrap shrink-0">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-base tracking-tight text-slate-100 font-sans">
+            <span className="font-extrabold text-base tracking-wider text-slate-100 font-mono">
               AXIOM
             </span>
             <span className="text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-500/40">
@@ -76,8 +78,8 @@ export const Header: React.FC<Props> = ({
             WebGL2 60 FPS GLSL Engine
           </span>
         </div>
-
       </div>
+
 
       {/* Right Side Controls Group (Category Menus + Math Lab + Studio Actions) */}
       <div className="flex items-center gap-2.5">
