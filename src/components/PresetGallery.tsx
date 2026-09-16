@@ -52,7 +52,8 @@ export const PresetGallery: React.FC<Props> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-200"
+        className="relative w-full max-w-6xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-200"
+
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -100,11 +101,12 @@ export const PresetGallery: React.FC<Props> = ({
         </div>
 
         {/* Gallery Bento Grid */}
-        <div className="p-6 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="p-6 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredPresets.map(preset => {
             const isCurrent = activePresetId === preset.id;
             const mathHtml = katex.renderToString(preset.mathFormulaLatex, {
-              throwOnError: false
+              throwOnError: false,
+              displayMode: false
             });
 
             return (
@@ -114,14 +116,14 @@ export const PresetGallery: React.FC<Props> = ({
                   onSelectPreset(preset);
                   onClose();
                 }}
-                className={`group relative rounded-xl p-4 border transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden ${
+                className={`group relative rounded-xl p-4 border transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden min-h-[300px] ${
                   isCurrent
                     ? "bg-slate-800/90 border-cyan-500 ring-2 ring-cyan-500/40 shadow-xl"
                     : "bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 hover:-translate-y-0.5"
                 }`}
               >
                 {/* Visual Top Glow Banner */}
-                <div className={`h-24 -mx-4 -mt-4 mb-3 bg-gradient-to-br ${preset.thumbnailGradient} relative flex items-end p-3 overflow-hidden border-b border-slate-800/60`}>
+                <div className={`h-24 -mx-4 -mt-4 mb-3 bg-gradient-to-br ${preset.thumbnailGradient} relative flex items-end p-3 overflow-hidden border-b border-slate-800/60 shrink-0`}>
                   <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px]" />
                   <span className="relative z-10 text-[11px] font-mono uppercase tracking-wider text-white/90 bg-slate-950/60 px-2 py-0.5 rounded backdrop-blur-md border border-white/10">
                     {preset.category}
@@ -144,15 +146,21 @@ export const PresetGallery: React.FC<Props> = ({
                   </p>
                 </div>
 
-                {/* Formula Micro-Badge */}
-                <div className="mt-3 pt-2.5 border-t border-slate-800/80 overflow-x-auto text-xs text-cyan-300 font-serif">
-                  <span dangerouslySetInnerHTML={{ __html: mathHtml }} />
+                {/* Formula Display Container - Spacious, Unclipped */}
+                <div className="mt-3.5 pt-3 border-t border-slate-800/80">
+                  <div className="w-full min-h-[50px] px-3 py-2 rounded-lg bg-slate-950/90 border border-slate-800/80 text-cyan-300 text-xs sm:text-[13px] font-serif flex items-center justify-start overflow-x-auto shadow-inner">
+                    <div
+                      className="inline-block whitespace-nowrap py-1 leading-normal select-text"
+                      dangerouslySetInnerHTML={{ __html: mathHtml }}
+                    />
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
       </div>
+
     </div>
   );
 };

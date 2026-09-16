@@ -4,6 +4,7 @@ import { EQUATION_MODELS } from "./presets/equationModels";
 import { getPresetById } from "./presets/presetCatalog";
 import { WebGLCanvas } from "./engine/WebGLCanvas";
 import type { CanvasHandle } from "./engine/WebGLCanvas";
+import type { MathCategory } from "./types/studio";
 import { Header } from "./components/Header";
 
 import { EquationView } from "./components/EquationView";
@@ -11,7 +12,9 @@ import { ParameterPanel } from "./components/ParameterPanel";
 import { ColorPalettePicker } from "./components/ColorPalettePicker";
 import { PresetGallery } from "./components/PresetGallery";
 import { AnimationModal } from "./components/AnimationModal";
+import { CustomMathModal } from "./components/CustomMathModal";
 import { ChevronRight, ChevronLeft, Sliders, BookOpen } from "lucide-react";
+
 
 export function App() {
   const {
@@ -32,12 +35,30 @@ export function App() {
 
   const canvasHandleRef = useRef<CanvasHandle | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isCustomMathOpen, setIsCustomMathOpen] = useState(false);
   const [isAnimationModalOpen, setIsAnimationModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [sidebarTab, setSidebarTab] = useState<"controls" | "equation">("controls");
 
   const currentPreset = getPresetById(state.presetId);
   const currentEquation = EQUATION_MODELS[currentPreset?.equationName || "mandelbrot"] || EQUATION_MODELS.mandelbrot;
+
+  const handleApplyCustomMath = (config: {
+    category: MathCategory;
+    equationName: string;
+    parameters: Record<string, number>;
+    zoom?: number;
+    pan?: [number, number];
+    palette?: string;
+  }) => {
+    setCategory(config.category);
+    if (config.palette) setPalette(config.palette);
+    if (config.zoom !== undefined) setZoom(config.zoom);
+    if (config.pan) setPan(config.pan);
+    for (const [key, val] of Object.entries(config.parameters)) {
+      setParameter(key, val);
+    }
+  };
 
   const handleTakeScreenshot = () => {
     if (!canvasHandleRef.current) return;
@@ -63,11 +84,13 @@ export function App() {
         state={state}
         onSelectCategory={setCategory}
         onOpenGallery={() => setIsGalleryOpen(true)}
+        onOpenCustomMath={() => setIsCustomMathOpen(true)}
         onOpenAnimationModal={() => setIsAnimationModalOpen(true)}
         onTakeScreenshot={handleTakeScreenshot}
         onTogglePause={togglePause}
         onResetParameters={resetCurrentParameters}
       />
+
 
       {/* Main Viewport & Instrument Workspace */}
       <div className="relative flex-1 flex overflow-hidden">
@@ -207,7 +230,16 @@ export function App() {
           return canvasHandleRef.current.stopRecording();
         }}
       />
+
+      {/* Custom Math Studio & Suggestions Modal */}
+      <CustomMathModal
+
+        isOpen={isCustomMathOpen}
+        onClose={() => setIsCustomMathOpen(false)}
+        onApplyMath={handleApplyCustomMath}
+      />
     </div>
   );
 }
+
 export default App;

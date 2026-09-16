@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import type { MathCategory, StudioState } from "../types/studio";
 import { generateShareUrl } from "../state/urlCodec";
-
 import {
   Sparkles,
   Share2,
@@ -15,13 +14,15 @@ import {
   Atom,
   Activity,
   Grid,
-  Waves
+  Waves,
+  Sigma
 } from "lucide-react";
 
 interface Props {
   state: StudioState;
   onSelectCategory: (category: MathCategory) => void;
   onOpenGallery: () => void;
+  onOpenCustomMath: () => void;
   onOpenAnimationModal: () => void;
   onTakeScreenshot: () => void;
   onTogglePause: () => void;
@@ -40,6 +41,7 @@ export const Header: React.FC<Props> = ({
   state,
   onSelectCategory,
   onOpenGallery,
+  onOpenCustomMath,
   onOpenAnimationModal,
   onTakeScreenshot,
   onTogglePause,
@@ -55,52 +57,68 @@ export const Header: React.FC<Props> = ({
   };
 
   return (
-    <header className="h-14 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md px-4 flex items-center justify-between select-none z-30 shrink-0">
-      {/* Brand & Logo */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-900/40">
-          <Sparkles className="w-4 h-4" />
+    <header className="h-18 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-xl px-5 flex items-center justify-between select-none z-30 shrink-0 shadow-lg shadow-black/30">
+      {/* Brand & Logo (Left Side) */}
+      <div className="flex items-center gap-3.5">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 text-white shadow-lg shadow-cyan-900/50 border border-cyan-400/30 shrink-0">
+          <Sparkles className="w-5 h-5" />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col whitespace-nowrap shrink-0">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm tracking-tight text-slate-100">
+            <span className="font-extrabold text-base tracking-tight text-slate-100 font-sans">
               AXIOM
             </span>
-            <span className="text-[11px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-800">
+            <span className="text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-500/40">
               Math & Art Studio
             </span>
           </div>
+          <span className="text-[11px] text-slate-400 hidden sm:inline-block font-mono">
+            WebGL2 60 FPS GLSL Engine
+          </span>
         </div>
+
       </div>
 
-      {/* Category Switcher Tabs */}
-      <nav className="hidden md:flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800/90">
-        {CATEGORIES.map(cat => {
-          const Icon = cat.icon;
-          const isActive = state.category === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => onSelectCategory(cat.id)}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
-                isActive
-                  ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
-              }`}
-            >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{cat.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+      {/* Right Side Controls Group (Category Menus + Math Lab + Studio Actions) */}
+      <div className="flex items-center gap-2.5">
+        {/* Category Switcher Tabs (Moved to the Right!) */}
+        <nav className="hidden lg:flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
+          {CATEGORIES.map(cat => {
+            const Icon = cat.icon;
+            const isActive = state.category === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => onSelectCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-cyan-500/25 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/70 border border-transparent"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
-      {/* Studio Action Controls */}
-      <div className="flex items-center gap-2">
+        <div className="h-6 w-px bg-slate-800 hidden lg:block" />
+
+        {/* Custom Math Lab Trigger Button */}
+        <button
+          onClick={onOpenCustomMath}
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-cyan-950/90 to-indigo-950/90 hover:from-cyan-900/90 hover:to-indigo-900/90 text-cyan-300 border border-cyan-500/60 shadow-md shadow-cyan-950/50 transition-all cursor-pointer hover:border-cyan-400"
+          title="Input Custom Mathematical Formulas & Explore Suggestions"
+        >
+          <Sigma className="w-4 h-4 text-cyan-400" />
+          <span>Math Lab</span>
+        </button>
+
         {/* Preset Gallery Trigger */}
         <button
           onClick={onOpenGallery}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shadow-sm"
           title="Open Curated Mathematical Presets"
         >
           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
@@ -110,7 +128,7 @@ export const Header: React.FC<Props> = ({
         {/* Animation & Video Trigger */}
         <button
           onClick={onOpenAnimationModal}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shadow-sm"
           title="Synthesize Motion & Record 60fps Video"
         >
           <Video className="w-3.5 h-3.5 text-indigo-400" />
@@ -120,10 +138,10 @@ export const Header: React.FC<Props> = ({
         {/* Play/Pause Button */}
         <button
           onClick={onTogglePause}
-          className={`p-1.5 rounded-lg text-xs font-medium border transition-colors ${
+          className={`p-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer ${
             state.isPaused
-              ? "bg-amber-950/60 border-amber-600 text-amber-300"
-              : "bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800"
+              ? "bg-amber-950/70 border-amber-600 text-amber-300 shadow-md"
+              : "bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-slate-100"
           }`}
           title={state.isPaused ? "Resume Animation" : "Pause Animation"}
         >
@@ -133,7 +151,7 @@ export const Header: React.FC<Props> = ({
         {/* Reset Parameters */}
         <button
           onClick={onResetParameters}
-          className="p-1.5 rounded-lg text-xs bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+          className="p-2 rounded-xl text-xs bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
           title="Reset Parameters to Preset Defaults"
         >
           <RotateCcw className="w-4 h-4" />
@@ -142,7 +160,7 @@ export const Header: React.FC<Props> = ({
         {/* Snapshot PNG */}
         <button
           onClick={onTakeScreenshot}
-          className="p-1.5 rounded-lg text-xs bg-slate-900 border border-slate-800 text-slate-300 hover:text-cyan-300 hover:bg-slate-800 transition-colors"
+          className="p-2 rounded-xl text-xs bg-slate-900 border border-slate-800 text-slate-300 hover:text-cyan-300 hover:bg-slate-800 transition-colors cursor-pointer"
           title="Capture High-Resolution PNG"
         >
           <Camera className="w-4 h-4" />
@@ -151,10 +169,10 @@ export const Header: React.FC<Props> = ({
         {/* Share Zero-Database Link */}
         <button
           onClick={handleShare}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             copied
-              ? "bg-emerald-600 text-white font-semibold"
-              : "bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-semibold shadow-md shadow-cyan-950/50"
+              ? "bg-emerald-600 text-white font-bold shadow-lg shadow-emerald-950/60"
+              : "bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-bold shadow-lg shadow-cyan-950/60"
           }`}
           title="Copy Zero-Database URL Link"
         >
