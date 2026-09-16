@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+:root {
+  --bg-ground: #090d16;
+  --bg-surface: #0f1523;
+  --bg-surface-elevated: #161e31;
+  --bg-surface-hover: #1c263d;
+  --border-subtle: #1e293b;
+  --border-strong: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-indigo: #6366f1;
+  --accent-glow: rgba(6, 182, 212, 0.25);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-ground);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular numbers for instrument fidelity */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbar for control panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Equation variable highlight styles */
+.katex .math-var-active {
+  background-color: rgba(6, 182, 212, 0.35);
+  color: #38bdf8 !important;
+  padding: 1px 4px;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+}
+
+.katex .math-var-hover {
+  background-color: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc !important;
+  padding: 1px 3px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
