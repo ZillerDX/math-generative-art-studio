@@ -1,4 +1,4 @@
-﻿export type MathCategory = 
+export type MathCategory = 
   | "fractals" 
   | "parametric" 
   | "attractors" 
@@ -49,6 +49,8 @@ export interface EquationModel {
   pedagogicalNotes: string[];
 }
 
+export type Language = "en" | "th";
+
 export interface StudioState {
   category: MathCategory;
   presetId: string;
@@ -60,6 +62,7 @@ export interface StudioState {
   speed: number;
   hoveredVar: string | null;
   activeVar: string | null;
+  lang: Language;
   activeLfo: {
     enabled: boolean;
     paramId: string;
@@ -68,6 +71,7 @@ export interface StudioState {
     waveform: "sine" | "triangle" | "sawtooth";
   };
 }
+
 
 export interface ColorPalette {
   id: string;

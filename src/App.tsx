@@ -1,20 +1,20 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useStudioState } from "./state/useStudioState";
 import { EQUATION_MODELS } from "./presets/equationModels";
 import { getPresetById } from "./presets/presetCatalog";
 import { WebGLCanvas } from "./engine/WebGLCanvas";
 import type { CanvasHandle } from "./engine/WebGLCanvas";
 import type { MathCategory } from "./types/studio";
+import { getTranslation } from "./i18n/translations";
 import { Header } from "./components/Header";
-
 import { EquationView } from "./components/EquationView";
 import { ParameterPanel } from "./components/ParameterPanel";
 import { ColorPalettePicker } from "./components/ColorPalettePicker";
 import { PresetGallery } from "./components/PresetGallery";
 import { AnimationModal } from "./components/AnimationModal";
 import { CustomMathModal } from "./components/CustomMathModal";
-import { ChevronRight, ChevronLeft, Sliders, BookOpen } from "lucide-react";
-
+import { MathCalculatorKeypad } from "./components/MathCalculatorKeypad";
+import { ChevronRight, ChevronLeft, Sliders, BookOpen, X } from "lucide-react";
 
 export function App() {
   const {
@@ -30,15 +30,29 @@ export function App() {
     setHoveredVar,
     setActiveVar,
     configureLfo,
-    resetCurrentParameters
+    resetCurrentParameters,
+    setLanguage
   } = useStudioState();
 
+  const t = getTranslation(state.lang);
   const canvasHandleRef = useRef<CanvasHandle | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isCustomMathOpen, setIsCustomMathOpen] = useState(false);
   const [isAnimationModalOpen, setIsAnimationModalOpen] = useState(false);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [sidebarTab, setSidebarTab] = useState<"controls" | "equation">("controls");
+
+  // Keyboard Escape listener for calculator modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isCalculatorOpen) {
+        setIsCalculatorOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isCalculatorOpen]);
 
   const currentPreset = getPresetById(state.presetId);
   const currentEquation = EQUATION_MODELS[currentPreset?.equationName || "mandelbrot"] || EQUATION_MODELS.mandelbrot;
@@ -85,10 +99,12 @@ export function App() {
         onSelectCategory={setCategory}
         onOpenGallery={() => setIsGalleryOpen(true)}
         onOpenCustomMath={() => setIsCustomMathOpen(true)}
+        onOpenCalculator={() => setIsCalculatorOpen(true)}
         onOpenAnimationModal={() => setIsAnimationModalOpen(true)}
         onTakeScreenshot={handleTakeScreenshot}
         onTogglePause={togglePause}
         onResetParameters={resetCurrentParameters}
+        onToggleLanguage={setLanguage}
       />
 
 
@@ -124,25 +140,25 @@ export function App() {
           <div className="flex items-center border-b border-slate-800 px-4 pt-3 gap-2 bg-slate-900/40 shrink-0">
             <button
               onClick={() => setSidebarTab("controls")}
-              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 ${
+              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap ${
                 sidebarTab === "controls"
                   ? "border-cyan-400 text-cyan-300"
                   : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
               <Sliders className="w-3.5 h-3.5" />
-              <span>Controls</span>
+              <span>{t.tabControls}</span>
             </button>
             <button
               onClick={() => setSidebarTab("equation")}
-              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 ${
+              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap ${
                 sidebarTab === "equation"
                   ? "border-cyan-400 text-cyan-300"
                   : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span>Equation View</span>
+              <span>{t.tabEquation}</span>
             </button>
           </div>
 
@@ -154,13 +170,13 @@ export function App() {
                 <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
-                      Active Equation Model
+                      {t.activeModel}
                     </span>
                     <button
                       onClick={() => setIsGalleryOpen(true)}
                       className="text-[11px] text-cyan-400 hover:text-cyan-300 hover:underline"
                     >
-                      Browse presets
+                      {t.browsePresets}
                     </button>
                   </div>
                   <h3 className="font-semibold text-sm text-slate-100">
@@ -173,6 +189,7 @@ export function App() {
 
                 {/* Equation Parameters */}
                 <ParameterPanel
+                  lang={state.lang}
                   parameters={currentEquation.parameters}
                   values={state.parameters}
                   baseValues={baseParameters}
@@ -193,6 +210,7 @@ export function App() {
             ) : (
               /* Dedicated Equation View */
               <EquationView
+                lang={state.lang}
                 equation={currentEquation}
                 parameters={state.parameters}
                 hoveredVar={state.hoveredVar}
@@ -208,6 +226,7 @@ export function App() {
       {/* Preset Gallery Modal */}
       <PresetGallery
         isOpen={isGalleryOpen}
+        lang={state.lang}
         activePresetId={state.presetId}
         onClose={() => setIsGalleryOpen(false)}
         onSelectPreset={loadPreset}
@@ -216,6 +235,7 @@ export function App() {
       {/* Animation & Video Synthesizer Modal */}
       <AnimationModal
         isOpen={isAnimationModalOpen}
+        lang={state.lang}
         state={state}
         parameters={currentEquation.parameters}
         onClose={() => setIsAnimationModalOpen(false)}
@@ -233,11 +253,44 @@ export function App() {
 
       {/* Custom Math Studio & Suggestions Modal */}
       <CustomMathModal
-
         isOpen={isCustomMathOpen}
+        lang={state.lang}
+        parameters={currentEquation.parameters}
+        activeParamId={state.activeVar || undefined}
         onClose={() => setIsCustomMathOpen(false)}
         onApplyMath={handleApplyCustomMath}
+        onApplyValueToParam={setParameter}
       />
+
+      {/* Dedicated Interactive Scientific Math Keypad Modal */}
+      {isCalculatorOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setIsCalculatorOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-lg"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsCalculatorOpen(false)}
+              className="absolute -top-3 -right-3 z-10 p-1.5 rounded-full bg-slate-800 border border-slate-700 text-slate-400 hover:text-white shadow-lg cursor-pointer transition-colors"
+              title="Close (Esc)"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <MathCalculatorKeypad
+              lang={state.lang}
+              parameters={currentEquation.parameters}
+              activeParamId={state.activeVar || undefined}
+              onApplyValueToParam={(paramId, val) => {
+                setParameter(paramId, val);
+              }}
+              onClose={() => setIsCalculatorOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,32 +1,35 @@
 import React, { useState, useEffect } from "react";
 import katex from "katex";
 import { PRESETS } from "../presets/presetCatalog";
-import type { MathCategory, PresetDef } from "../types/studio";
+import type { MathCategory, PresetDef, Language } from "../types/studio";
+import { getTranslation } from "../i18n/translations";
 import { X, Sparkles, Compass, Atom, Activity, Grid, Waves, Check } from "lucide-react";
-
 
 interface Props {
   isOpen: boolean;
+  lang: Language;
   activePresetId: string;
   onClose: () => void;
   onSelectPreset: (preset: PresetDef) => void;
 }
 
-const CATEGORY_TABS: { id: MathCategory | "all"; label: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: "all", label: "All Works", icon: Sparkles },
-  { id: "fractals", label: "Fractals", icon: Atom },
-  { id: "parametric", label: "Parametric", icon: Compass },
-  { id: "attractors", label: "Attractors", icon: Activity },
-  { id: "cellular", label: "Cellular", icon: Grid },
-  { id: "flowfields", label: "Flow Fields", icon: Waves },
+const CATEGORY_TABS: { id: MathCategory | "all"; icon: React.FC<{ className?: string }> }[] = [
+  { id: "all", icon: Sparkles },
+  { id: "fractals", icon: Atom },
+  { id: "parametric", icon: Compass },
+  { id: "attractors", icon: Activity },
+  { id: "cellular", icon: Grid },
+  { id: "flowfields", icon: Waves },
 ];
 
 export const PresetGallery: React.FC<Props> = ({
   isOpen,
+  lang,
   activePresetId,
   onClose,
   onSelectPreset
 }) => {
+  const t = getTranslation(lang);
   const [selectedCategory, setSelectedCategory] = useState<MathCategory | "all">("all");
 
   // Keyboard Escape listener
@@ -53,7 +56,6 @@ export const PresetGallery: React.FC<Props> = ({
     >
       <div
         className="relative w-full max-w-6xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-200"
-
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -61,10 +63,10 @@ export const PresetGallery: React.FC<Props> = ({
           <div>
             <h2 className="text-lg font-semibold text-slate-100 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-cyan-400" />
-              <span>Mathematical Masterpieces Gallery</span>
+              <span>{t.presetsTitle}</span>
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Explore curated equations from complex dynamics, non-linear chaos, and cellular universes.
+              {t.presetsSubtitle}
             </p>
           </div>
 
@@ -83,18 +85,19 @@ export const PresetGallery: React.FC<Props> = ({
           {CATEGORY_TABS.map(tab => {
             const Icon = tab.icon;
             const isSelected = selectedCategory === tab.id;
+            const label = tab.id === "all" ? t.allWorks : t.categories[tab.id];
             return (
               <button
                 key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 whitespace-nowrap ${
                   isSelected
                     ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm"
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
+                <span>{label}</span>
               </button>
             );
           })}
@@ -131,7 +134,7 @@ export const PresetGallery: React.FC<Props> = ({
                   {isCurrent && (
                     <span className="relative z-10 ml-auto flex items-center gap-1 text-[11px] font-medium text-cyan-300 bg-slate-950/80 px-2 py-0.5 rounded border border-cyan-500/40">
                       <Check className="w-3 h-3" />
-                      <span>Active</span>
+                      <span>{t.activeBadge}</span>
                     </span>
                   )}
                 </div>

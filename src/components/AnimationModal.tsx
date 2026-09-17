@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import type { ParameterDef, StudioState } from "../types/studio";
+import type { ParameterDef, StudioState, Language } from "../types/studio";
+import { getTranslation } from "../i18n/translations";
 import { X, Play, Video, Camera, Activity, Sliders } from "lucide-react";
-
 
 interface Props {
   isOpen: boolean;
+  lang: Language;
   state: StudioState;
   parameters: ParameterDef[];
   onClose: () => void;
@@ -16,6 +17,7 @@ interface Props {
 
 export const AnimationModal: React.FC<Props> = ({
   isOpen,
+  lang,
   state,
   parameters,
   onClose,
@@ -24,6 +26,7 @@ export const AnimationModal: React.FC<Props> = ({
   onStartRecording,
   onStopRecording
 }) => {
+  const t = getTranslation(lang);
   const [isRecording, setIsRecording] = useState(false);
   const [recordSeconds, setRecordSeconds] = useState(5);
   const [recordProgress, setRecordProgress] = useState(0);
@@ -95,7 +98,7 @@ export const AnimationModal: React.FC<Props> = ({
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-cyan-400" />
             <h2 className="text-base font-semibold text-slate-100">
-              Motion Synthesizer & Video Export
+              {t.motionTitle}
             </h2>
           </div>
           {!isRecording && (
@@ -114,7 +117,7 @@ export const AnimationModal: React.FC<Props> = ({
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-cyan-400" />
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-                LFO Parameter Modulation
+                {t.lfoTitle}
               </span>
             </div>
             <button
@@ -126,14 +129,14 @@ export const AnimationModal: React.FC<Props> = ({
               }`}
             >
               <Play className="w-3 h-3 fill-current" />
-              <span>{state.activeLfo.enabled ? "Modulating Active" : "Enable LFO"}</span>
+              <span>{state.activeLfo.enabled ? t.modulatingActive : t.enableLfo}</span>
             </button>
           </div>
 
           {/* Select Target Parameter */}
           <div className="flex flex-col gap-1 mt-1">
             <label className="text-[11px] font-medium text-slate-400">
-              Target Parameter to Modulate
+              {t.targetParam}
             </label>
             <div className="grid grid-cols-2 gap-1.5">
               {parameters.map(param => (
@@ -154,7 +157,7 @@ export const AnimationModal: React.FC<Props> = ({
 
           {/* Waveform Selector */}
           <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80">
-            <span className="text-[11px] text-slate-400">Waveform Oscillator</span>
+            <span className="text-[11px] text-slate-400">{t.waveformOsc}</span>
             <div className="flex items-center gap-1">
               {(["sine", "triangle", "sawtooth"] as const).map(wf => (
                 <button
@@ -176,7 +179,7 @@ export const AnimationModal: React.FC<Props> = ({
           <div className="grid grid-cols-2 gap-3 mt-2">
             <div className="flex flex-col gap-1">
               <div className="flex justify-between text-[11px] text-slate-400">
-                <span>Oscillation Speed</span>
+                <span>{t.oscSpeed}</span>
                 <span className="font-mono tabular-nums text-cyan-400">{state.activeLfo.speed.toFixed(2)} Hz</span>
               </div>
               <input
@@ -191,7 +194,7 @@ export const AnimationModal: React.FC<Props> = ({
             </div>
             <div className="flex flex-col gap-1">
               <div className="flex justify-between text-[11px] text-slate-400">
-                <span>Amplitude Range</span>
+                <span>{t.ampRange}</span>
                 <span className="font-mono tabular-nums text-cyan-400">{state.activeLfo.amplitude.toFixed(2)}</span>
               </div>
               <input
@@ -213,7 +216,7 @@ export const AnimationModal: React.FC<Props> = ({
             <div className="flex items-center gap-2">
               <Video className="w-4 h-4 text-cyan-400" />
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-                60 FPS Video Loop Recorder
+                {t.videoRecorderTitle}
               </span>
             </div>
             <div className="flex items-center gap-1 text-xs">
@@ -238,7 +241,7 @@ export const AnimationModal: React.FC<Props> = ({
           {isRecording ? (
             <div className="flex flex-col gap-2">
               <div className="flex justify-between text-xs font-mono tabular-nums text-cyan-300">
-                <span>Capturing GPU Canvas (60fps)...</span>
+                <span>{t.capturingProgress}</span>
                 <span>{recordProgress}%</span>
               </div>
               <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
@@ -252,20 +255,20 @@ export const AnimationModal: React.FC<Props> = ({
             <div className="grid grid-cols-2 gap-3 mt-1">
               <button
                 onClick={handleRecordVideo}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-semibold text-xs transition-all shadow-lg shadow-cyan-950/50 cursor-pointer"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-semibold text-xs transition-all shadow-lg shadow-cyan-950/50 cursor-pointer whitespace-nowrap"
               >
                 <Video className="w-4 h-4" />
-                <span>Record {recordSeconds}s WebM Video</span>
+                <span>{t.recordVideoBtn.replace("{s}", recordSeconds.toString())}</span>
               </button>
               <button
                 onClick={() => {
                   onTakeScreenshot();
                   onClose();
                 }}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition-all border border-slate-700 cursor-pointer"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition-all border border-slate-700 cursor-pointer whitespace-nowrap"
               >
                 <Camera className="w-4 h-4" />
-                <span>Snap 4K PNG</span>
+                <span>{t.snapPngBtn}</span>
               </button>
             </div>
           )}

@@ -1,9 +1,11 @@
 import React from "react";
 import katex from "katex";
-import type { ParameterDef } from "../types/studio";
+import type { ParameterDef, Language } from "../types/studio";
+import { getTranslation } from "../i18n/translations";
 import { RotateCcw, Sliders } from "lucide-react";
 
 interface Props {
+  lang: Language;
   parameters: ParameterDef[];
   values: Record<string, number>;
   baseValues?: Record<string, number>;
@@ -16,27 +18,29 @@ interface Props {
 }
 
 export const ParameterPanel: React.FC<Props> = ({
+  lang,
   parameters,
   values,
   hoveredVar,
   activeVar,
   onHoverVar,
   onActiveVar,
-
   onChangeParameter,
   onResetParameter
 }) => {
+  const t = getTranslation(lang);
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between pb-2 border-b border-slate-800">
         <div className="flex items-center gap-2">
           <Sliders className="w-4 h-4 text-cyan-400" />
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-            Equation Controls
+            {t.equationControls}
           </h3>
         </div>
         <span className="text-[11px] text-slate-500 font-mono">
-          {parameters.length} Uniforms
+          {parameters.length} {t.uniformsCount}
         </span>
       </div>
 

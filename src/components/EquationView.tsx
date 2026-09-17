@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
 import katex from "katex";
-import type { EquationModel } from "../types/studio";
+import type { EquationModel, Language } from "../types/studio";
+import { getTranslation } from "../i18n/translations";
 import { Copy, Check, Sparkles } from "lucide-react";
 
-
 interface Props {
+  lang: Language;
   equation: EquationModel;
   parameters: Record<string, number>;
   hoveredVar: string | null;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export const EquationView: React.FC<Props> = ({
+  lang,
   equation,
   parameters,
   hoveredVar,
@@ -21,6 +23,7 @@ export const EquationView: React.FC<Props> = ({
   onHoverVar,
   onSelectVar
 }) => {
+  const t = getTranslation(lang);
   const [copied, setCopied] = React.useState(false);
 
   // Render pure KaTeX formula
@@ -57,7 +60,7 @@ export const EquationView: React.FC<Props> = ({
           title="Copy LaTeX formula"
         >
           {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-          <span>{copied ? "Copied" : "LaTeX"}</span>
+          <span>{copied ? t.copied : t.copyLatex}</span>
         </button>
       </div>
 
@@ -77,7 +80,7 @@ export const EquationView: React.FC<Props> = ({
       {/* Bi-Directional Interactive Variable Badges */}
       <div className="flex flex-col gap-1.5 pt-1">
         <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-          Interactive Parameter Matrix (Click or hover to highlight)
+          {t.interactiveMatrixTitle}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {equation.parameters.map(param => {

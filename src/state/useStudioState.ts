@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { StudioState, MathCategory, PresetDef } from "../types/studio";
+import type { StudioState, MathCategory, PresetDef, Language } from "../types/studio";
 import { PRESETS, getPresetById } from "../presets/presetCatalog";
 import { decodeStudioState, encodeStudioState } from "./urlCodec";
 
@@ -33,6 +33,7 @@ export function useStudioState() {
       speed: decoded?.speed ?? initialPreset.speed,
       hoveredVar: null,
       activeVar: null,
+      lang: decoded?.lang || "th",
       activeLfo: decoded?.activeLfo || (initialPreset.lfo ? {
         enabled: true,
         paramId: initialPreset.lfo.paramId,
@@ -176,6 +177,10 @@ export function useStudioState() {
     }
   }, [state.presetId]);
 
+  const setLanguage = useCallback((lang: Language) => {
+    setState(prev => ({ ...prev, lang }));
+  }, []);
+
   return {
     state,
     baseParameters: baseParamRef.current,
@@ -190,6 +195,7 @@ export function useStudioState() {
     setHoveredVar,
     setActiveVar,
     configureLfo,
-    resetCurrentParameters
+    resetCurrentParameters,
+    setLanguage
   };
 }

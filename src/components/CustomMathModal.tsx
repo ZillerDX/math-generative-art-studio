@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import katex from "katex";
-import type { MathCategory } from "../types/studio";
+import type { MathCategory, Language, ParameterDef } from "../types/studio";
+import { getTranslation } from "../i18n/translations";
+import { MathCalculatorKeypad } from "./MathCalculatorKeypad";
 import {
   X,
   Sigma,
@@ -10,7 +12,8 @@ import {
   Atom,
   Activity,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Calculator
 } from "lucide-react";
 
 
@@ -137,6 +140,9 @@ export const MATH_SUGGESTIONS: MathSuggestion[] = [
 
 interface Props {
   isOpen: boolean;
+  lang: Language;
+  parameters?: ParameterDef[];
+  activeParamId?: string;
   onClose: () => void;
   onApplyMath: (config: {
     category: MathCategory;
@@ -146,14 +152,20 @@ interface Props {
     pan?: [number, number];
     palette?: string;
   }) => void;
+  onApplyValueToParam?: (paramId: string, value: number) => void;
 }
 
 export const CustomMathModal: React.FC<Props> = ({
   isOpen,
+  lang,
+  parameters = [],
+  activeParamId,
   onClose,
-  onApplyMath
+  onApplyMath,
+  onApplyValueToParam
 }) => {
-  const [activeTab, setActiveTab] = useState<"suggestions" | "builder">("suggestions");
+  const t = getTranslation(lang);
+  const [activeTab, setActiveTab] = useState<"suggestions" | "builder" | "keypad">("suggestions");
 
   // Custom Math Builder State
   const [builderType, setBuilderType] = useState<"fractal" | "rose" | "lissajous">("rose");
@@ -299,13 +311,13 @@ export const CustomMathModal: React.FC<Props> = ({
             </div>
             <div>
               <h2 className="text-base font-semibold text-slate-100 flex items-center gap-2">
-                <span>Custom Math Studio & Suggestions</span>
+                <span>{t.mathLabTitle}</span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/50 text-cyan-300">
                   Formula Engine
                 </span>
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                ป้อนสมการคณิตศาสตร์ของคุณเอง หรือเลือกสมการแนะนำพร้อมดูผลลัพธ์ภาพที่ได้ก่อนสร้างงาน
+                {t.mathLabSubtitle}
               </p>
             </div>
           </div>
@@ -319,29 +331,40 @@ export const CustomMathModal: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Section Tabs: Suggestions vs Custom Builder */}
-        <div className="flex items-center gap-2 px-6 pt-3 pb-2 border-b border-slate-800/80 bg-slate-950/20">
+        {/* Section Tabs: Suggestions vs Custom Builder vs Scientific Keypad */}
+        <div className="flex items-center gap-2 px-6 pt-3 pb-2 border-b border-slate-800/80 bg-slate-950/20 overflow-x-auto">
           <button
             onClick={() => setActiveTab("suggestions")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
               activeTab === "suggestions"
                 ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Math Suggestions (สมการแนะนำ)</span>
+            <span>{t.tabSuggestions}</span>
           </button>
           <button
             onClick={() => setActiveTab("builder")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
               activeTab === "builder"
                 ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
             }`}
           >
             <Sliders className="w-3.5 h-3.5" />
-            <span>Custom Math Builder (สร้างสมการเอง)</span>
+            <span>{t.tabBuilder}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("keypad")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
+              activeTab === "keypad"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
+            }`}
+          >
+            <Calculator className="w-3.5 h-3.5" />
+            <span>{t.tabKeypad}</span>
           </button>
         </div>
 
@@ -395,7 +418,7 @@ export const CustomMathModal: React.FC<Props> = ({
                     <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-800/80 flex flex-col gap-1 text-xs">
                       <span className="text-[11px] font-semibold text-cyan-400 flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>ผลลัพธ์ภาพที่จะได้:</span>
+                        <span>{t.visualOutcomeLabel}</span>
                       </span>
                       <p className="text-slate-300 text-xs leading-relaxed">
                         {sug.visualOutcome}
@@ -417,14 +440,14 @@ export const CustomMathModal: React.FC<Props> = ({
                       }}
                       className="mt-1 w-full py-2 px-3 rounded-lg bg-cyan-500/20 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 font-semibold text-xs border border-cyan-500/50 hover:border-cyan-400 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                     >
-                      <span>สร้างผลงานจากสมการนี้</span>
+                      <span>{t.applyMathBtn}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 );
               })}
             </div>
-          ) : (
+          ) : activeTab === "builder" ? (
             /* TAB 2: CUSTOM MATH BUILDER */
             <div className="flex flex-col gap-6 max-w-3xl mx-auto">
               {/* Paradigm Selector */}
@@ -737,8 +760,20 @@ export const CustomMathModal: React.FC<Props> = ({
                 className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold text-sm shadow-xl shadow-cyan-950/50 cursor-pointer flex items-center justify-center gap-2 transition-all"
               >
                 <Sparkles className="w-4 h-4 fill-current" />
-                <span>ประมวลผลและสร้างงานภาพ GPU แบบ Real-time (Apply to Studio)</span>
+                <span>{t.applyStudioBtn}</span>
               </button>
+            </div>
+          ) : (
+            /* TAB 3: SCIENTIFIC KEYPAD */
+            <div className="max-w-3xl mx-auto py-2">
+              <MathCalculatorKeypad
+                lang={lang}
+                parameters={parameters}
+                activeParamId={activeParamId}
+                onApplyValueToParam={(paramId, value) => {
+                  onApplyValueToParam?.(paramId, value);
+                }}
+              />
             </div>
           )}
         </div>
