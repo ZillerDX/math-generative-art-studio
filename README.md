@@ -1,4 +1,4 @@
-﻿# Axiom: Generative Math & Art Studio
+# Axiom: Generative Math & Art Studio
 
 <div align="center">
 
@@ -15,7 +15,7 @@
 [![CI/CD](https://img.shields.io/badge/GitHub%20Pages-Automated%20Deploy-brightgreen?style=flat-square&logo=githubactions)](https://github.com/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
 
-[🌐 Live Demo](https://github.com/) • [📖 English Guide](#english-documentation) • [🇹🇭 คู่มือภาษาไทย](#thai-documentation) • [🚀 Deploy to GitHub Pages](#github-pages-deployment-guide)
+[🌐 Live Demo](https://zillerdx.github.io/math-generative-art-studio/) • [📖 English Guide](#english-documentation) • [🇹🇭 คู่มือภาษาไทย](#thai-documentation) • [🚀 Deploy to GitHub Pages](#github-pages-deployment-guide)
 
 </div>
 
