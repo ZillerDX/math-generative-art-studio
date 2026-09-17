@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import katex from "katex";
-import type { MathCategory, Language, ParameterDef } from "../types/studio";
+import type { MathCategory, Language, ParameterDef, ThemeMode } from "../types/studio";
 import { getTranslation } from "../i18n/translations";
 import { MathCalculatorKeypad } from "./MathCalculatorKeypad";
 import {
@@ -141,6 +141,7 @@ export const MATH_SUGGESTIONS: MathSuggestion[] = [
 interface Props {
   isOpen: boolean;
   lang: Language;
+  theme?: ThemeMode;
   parameters?: ParameterDef[];
   activeParamId?: string;
   onClose: () => void;
@@ -158,6 +159,7 @@ interface Props {
 export const CustomMathModal: React.FC<Props> = ({
   isOpen,
   lang,
+  theme = "dark",
   parameters = [],
   activeParamId,
   onClose,
@@ -165,6 +167,7 @@ export const CustomMathModal: React.FC<Props> = ({
   onApplyValueToParam
 }) => {
   const t = getTranslation(lang);
+  const isLight = theme === "light";
   const [activeTab, setActiveTab] = useState<"suggestions" | "builder" | "keypad">("suggestions");
 
   // Custom Math Builder State
@@ -300,23 +303,29 @@ export const CustomMathModal: React.FC<Props> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-5xl max-h-[92vh] bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-200"
+        className={`relative w-full max-w-5xl max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border transition-colors ${
+          isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-900 border-slate-800 text-slate-200"
+        }`}
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/40">
+        <div className={`flex items-center justify-between px-6 py-4 border-b ${
+          isLight ? "border-slate-200 bg-slate-50/70" : "border-slate-800 bg-slate-950/40"
+        }`}>
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 text-white shadow-md shadow-cyan-900/40">
               <Sigma className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-slate-100 flex items-center gap-2">
+              <h2 className={`text-base font-semibold flex items-center gap-2 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
                 <span>{t.mathLabTitle}</span>
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/50 text-cyan-300">
+                <span className={`text-[10px] uppercase font-mono px-2 py-0.5 rounded border ${
+                  isLight ? "bg-cyan-50 border-cyan-300 text-cyan-800" : "bg-cyan-950 border border-cyan-500/50 text-cyan-300"
+                }`}>
                   Formula Engine
                 </span>
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className={`text-xs mt-0.5 ${isLight ? "text-slate-500" : "text-slate-400"}`}>
                 {t.mathLabSubtitle}
               </p>
             </div>
@@ -324,7 +333,11 @@ export const CustomMathModal: React.FC<Props> = ({
 
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-100 rounded-lg hover:bg-slate-800 transition-colors"
+            className={`p-2 rounded-lg transition-colors cursor-pointer ${
+              isLight
+                ? "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                : "text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+            }`}
             title="Close (Esc)"
           >
             <X className="w-5 h-5" />
@@ -332,12 +345,18 @@ export const CustomMathModal: React.FC<Props> = ({
         </div>
 
         {/* Section Tabs: Suggestions vs Custom Builder vs Scientific Keypad */}
-        <div className="flex items-center gap-2 px-6 pt-3 pb-2 border-b border-slate-800/80 bg-slate-950/20 overflow-x-auto">
+        <div className={`flex items-center gap-2 px-6 pt-3 pb-2 border-b overflow-x-auto ${
+          isLight ? "border-slate-200 bg-slate-50/50" : "border-slate-800/80 bg-slate-950/20"
+        }`}>
           <button
             onClick={() => setActiveTab("suggestions")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "suggestions"
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                ? isLight
+                  ? "bg-cyan-50 text-cyan-800 border border-cyan-300 shadow-xs"
+                  : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                : isLight
+                ? "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 border border-transparent"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
             }`}
           >
@@ -346,9 +365,13 @@ export const CustomMathModal: React.FC<Props> = ({
           </button>
           <button
             onClick={() => setActiveTab("builder")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "builder"
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                ? isLight
+                  ? "bg-cyan-50 text-cyan-800 border border-cyan-300 shadow-xs"
+                  : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                : isLight
+                ? "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 border border-transparent"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
             }`}
           >
@@ -357,9 +380,13 @@ export const CustomMathModal: React.FC<Props> = ({
           </button>
           <button
             onClick={() => setActiveTab("keypad")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "keypad"
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                ? isLight
+                  ? "bg-cyan-50 text-cyan-800 border border-cyan-300 shadow-xs"
+                  : "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-sm"
+                : isLight
+                ? "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 border border-transparent"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
             }`}
           >

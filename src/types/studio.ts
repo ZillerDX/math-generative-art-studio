@@ -50,6 +50,7 @@ export interface EquationModel {
 }
 
 export type Language = "en" | "th";
+export type ThemeMode = "dark" | "light";
 
 export interface StudioState {
   category: MathCategory;
@@ -63,6 +64,7 @@ export interface StudioState {
   hoveredVar: string | null;
   activeVar: string | null;
   lang: Language;
+  theme: ThemeMode;
   activeLfo: {
     enabled: boolean;
     paramId: string;

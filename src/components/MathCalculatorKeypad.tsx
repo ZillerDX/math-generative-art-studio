@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import katex from "katex";
-import type { Language, ParameterDef } from "../types/studio";
+import type { Language, ParameterDef, ThemeMode } from "../types/studio";
 import { getTranslation } from "../i18n/translations";
 import {
   Calculator,
@@ -10,6 +10,7 @@ import {
 
 interface Props {
   lang: Language;
+  theme?: ThemeMode;
   parameters: ParameterDef[];
   activeParamId?: string;
   onApplyValueToParam: (paramId: string, value: number) => void;
@@ -18,11 +19,13 @@ interface Props {
 
 export const MathCalculatorKeypad: React.FC<Props> = ({
   lang,
+  theme = "dark",
   parameters,
   activeParamId,
   onApplyValueToParam
 }) => {
   const t = getTranslation(lang);
+  const isLight = theme === "light";
   const [expression, setExpression] = useState<string>("7 / 4");
   const [targetParam, setTargetParam] = useState<string>(
     activeParamId || (parameters[0]?.id || "")
@@ -172,21 +175,27 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
   ];
 
   return (
-    <div className="flex flex-col gap-4 bg-slate-950/80 border border-slate-800 rounded-2xl p-5 text-slate-200 shadow-2xl backdrop-blur-xl">
+    <div className={`flex flex-col gap-4 border rounded-2xl p-5 shadow-2xl backdrop-blur-xl transition-colors ${
+      isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-950/80 border-slate-800 text-slate-200"
+    }`}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+      <div className={`flex items-center justify-between border-b pb-3 ${isLight ? "border-slate-200" : "border-slate-800/80"}`}>
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">
+          <div className={`p-2 rounded-xl border ${
+            isLight ? "bg-cyan-50 text-cyan-700 border-cyan-300" : "bg-cyan-500/20 text-cyan-400 border-cyan-500/40"
+          }`}>
             <Calculator className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+            <h3 className={`text-sm font-bold flex items-center gap-2 ${isLight ? "text-slate-900" : "text-slate-100"}`}>
               <span>{t.calcTitle}</span>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-cyan-300">
+              <span className={`text-[10px] uppercase font-mono px-2 py-0.5 rounded border ${
+                isLight ? "bg-cyan-50 border-cyan-300 text-cyan-800" : "bg-slate-900 border-slate-700 text-cyan-300"
+              }`}>
                 SCIENTIFIC
               </span>
             </h3>
-            <p className="text-[11px] text-slate-400">
+            <p className={`text-[11px] ${isLight ? "text-slate-500" : "text-slate-400"}`}>
               {t.calcSubtitle}
             </p>
           </div>
@@ -194,15 +203,17 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
       </div>
 
       {/* Calculator Screen / Formula Display */}
-      <div className="flex flex-col gap-2 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 shadow-inner">
-        <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+      <div className={`flex flex-col gap-2 p-3.5 rounded-xl border shadow-inner ${
+        isLight ? "bg-slate-50 border-slate-200" : "bg-slate-900/90 border-slate-800"
+      }`}>
+        <div className={`flex items-center justify-between text-[11px] font-mono ${isLight ? "text-slate-500" : "text-slate-400"}`}>
           <span>{t.calcExpression}</span>
           {evaluatedResult !== null ? (
-            <span className="text-cyan-400 font-bold tabular-nums">
+            <span className={`font-bold tabular-nums ${isLight ? "text-cyan-700" : "text-cyan-400"}`}>
               = {evaluatedResult.toFixed(5)}
             </span>
           ) : (
-            <span className="text-amber-400/80 text-[10px]">Evaluating...</span>
+            <span className="text-amber-500 text-[10px]">Evaluating...</span>
           )}
         </div>
 
@@ -215,27 +226,41 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
             setJustCalculated(false);
           }}
           placeholder="e.g. 7 / 4,  cos(pi/4) * 1.5,  2^3"
-          className="w-full bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 text-cyan-200 font-mono text-sm tracking-wide focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all tabular-nums"
+          className={`w-full px-3 py-2 rounded-lg border font-mono text-sm tracking-wide focus:outline-none focus:ring-1 transition-all tabular-nums ${
+            isLight
+              ? "bg-white border-slate-300 text-cyan-900 focus:border-cyan-500 focus:ring-cyan-500"
+              : "bg-slate-950 border-slate-800 text-cyan-200 focus:border-cyan-400 focus:ring-cyan-400"
+          }`}
         />
 
         {/* Live KaTeX Render of Expression */}
         {expression.trim() && (
-          <div className="min-h-[36px] flex items-center px-3 py-1.5 rounded bg-slate-950/60 border border-slate-800/60 text-cyan-300 text-xs font-serif overflow-x-auto">
+          <div className={`min-h-[36px] flex items-center px-3 py-1.5 rounded border text-xs font-serif overflow-x-auto ${
+            isLight
+              ? "bg-white border-slate-200 text-cyan-900"
+              : "bg-slate-950/60 border-slate-800/60 text-cyan-300"
+          }`}>
             <span dangerouslySetInnerHTML={{ __html: renderedLatexHtml }} />
           </div>
         )}
       </div>
 
       {/* Target Slider Selector & Quick Apply Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-slate-900/40 border border-slate-800/80">
+      <div className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl border ${
+        isLight ? "bg-slate-50 border-slate-200" : "bg-slate-900/40 border-slate-800/80"
+      }`}>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-300 whitespace-nowrap">
+          <span className={`text-xs font-medium whitespace-nowrap ${isLight ? "text-slate-700" : "text-slate-300"}`}>
             {t.calcTargetParam}:
           </span>
           <select
             value={targetParam}
             onChange={e => setTargetParam(e.target.value)}
-            className="bg-slate-950 border border-slate-700 text-cyan-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-cyan-400"
+            className={`text-xs rounded-lg px-2.5 py-1.5 focus:outline-none ${
+              isLight
+                ? "bg-white border border-slate-300 text-cyan-900 focus:border-cyan-500"
+                : "bg-slate-950 border border-slate-700 text-cyan-300 focus:border-cyan-400"
+            }`}
           >
             {parameters.map(p => (
               <option key={p.id} value={p.id}>
@@ -252,7 +277,9 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
             appliedNotification
               ? "bg-emerald-500 text-slate-950"
               : evaluatedResult !== null
-              ? "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-md shadow-cyan-950/50"
+              ? "bg-cyan-500 hover:bg-cyan-400 text-slate-950 shadow-md shadow-cyan-950/20"
+              : isLight
+              ? "bg-slate-200 text-slate-400 cursor-not-allowed"
               : "bg-slate-800 text-slate-500 cursor-not-allowed"
           }`}
         >
@@ -273,21 +300,36 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
       {/* Keypad Buttons Grid (6 Columns) */}
       <div className="grid grid-cols-6 gap-2">
         {KEYPAD_BUTTONS.map((btn, idx) => {
-          let btnStyle = "bg-slate-900/90 text-slate-200 border-slate-800 hover:bg-slate-800 hover:border-slate-700";
+          let btnStyle = isLight
+            ? "bg-white text-slate-800 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
+            : "bg-slate-900/90 text-slate-200 border-slate-800 hover:bg-slate-800 hover:border-slate-700";
+
           if (btn.type === "num") {
-            btnStyle = "bg-slate-900 text-slate-100 font-semibold border-slate-800 hover:bg-slate-800 text-sm";
+            btnStyle = isLight
+              ? "bg-white text-slate-900 font-semibold border-slate-200 hover:bg-slate-50 shadow-xs text-sm"
+              : "bg-slate-900 text-slate-100 font-semibold border-slate-800 hover:bg-slate-800 text-sm";
           } else if (btn.type === "fn") {
-            btnStyle = "bg-slate-950 text-indigo-300 font-serif border-slate-800/80 hover:bg-indigo-950/40 hover:border-indigo-500/40 text-xs";
+            btnStyle = isLight
+              ? "bg-indigo-50/60 text-indigo-700 font-serif border-indigo-200 hover:bg-indigo-100/70 text-xs"
+              : "bg-slate-950 text-indigo-300 font-serif border-slate-800/80 hover:bg-indigo-950/40 hover:border-indigo-500/40 text-xs";
           } else if (btn.type === "const") {
-            btnStyle = "bg-slate-950 text-cyan-300 font-serif border-slate-800/80 hover:bg-cyan-950/40 hover:border-cyan-500/40 text-xs";
+            btnStyle = isLight
+              ? "bg-cyan-50/60 text-cyan-800 font-serif border-cyan-200 hover:bg-cyan-100/70 text-xs"
+              : "bg-slate-950 text-cyan-300 font-serif border-slate-800/80 hover:bg-cyan-950/40 hover:border-cyan-500/40 text-xs";
           } else if (btn.type === "op") {
-            btnStyle = "bg-slate-900/80 text-cyan-400 font-bold border-slate-800 hover:bg-slate-800 text-xs";
+            btnStyle = isLight
+              ? "bg-slate-100 text-cyan-800 font-bold border-slate-200 hover:bg-slate-200 text-xs"
+              : "bg-slate-900/80 text-cyan-400 font-bold border-slate-800 hover:bg-slate-800 text-xs";
           } else if (btn.type === "clear") {
-            btnStyle = "bg-rose-950/40 text-rose-300 border-rose-900/60 hover:bg-rose-900/60 text-xs font-bold";
+            btnStyle = isLight
+              ? "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100 text-xs font-bold"
+              : "bg-rose-950/40 text-rose-300 border-rose-900/60 hover:bg-rose-900/60 text-xs font-bold";
           } else if (btn.type === "del") {
-            btnStyle = "bg-amber-950/40 text-amber-300 border-amber-900/60 hover:bg-amber-900/60 text-xs font-bold";
+            btnStyle = isLight
+              ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 text-xs font-bold"
+              : "bg-amber-950/40 text-amber-300 border-amber-900/60 hover:bg-amber-900/60 text-xs font-bold";
           } else if (btn.type === "eval") {
-            btnStyle = "bg-cyan-500 text-slate-950 border-cyan-400 hover:bg-cyan-400 font-extrabold text-sm shadow-md shadow-cyan-950/50";
+            btnStyle = "bg-cyan-500 text-slate-950 border-cyan-400 hover:bg-cyan-400 font-extrabold text-sm shadow-md shadow-cyan-950/20";
           }
 
           return (

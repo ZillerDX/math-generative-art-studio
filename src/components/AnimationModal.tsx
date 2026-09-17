@@ -84,27 +84,33 @@ export const AnimationModal: React.FC<Props> = ({
     };
   };
 
+  const isLight = state.theme === "light";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200"
       onClick={() => !isRecording && onClose()}
     >
       <div
-        className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 flex flex-col gap-5 text-slate-200"
+        className={`relative w-full max-w-lg rounded-2xl shadow-2xl p-6 flex flex-col gap-5 border transition-colors ${
+          isLight ? "bg-white border-slate-200 text-slate-900" : "bg-slate-900 border-slate-800 text-slate-200"
+        }`}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className={`flex items-center justify-between border-b pb-3 ${isLight ? "border-slate-200" : "border-slate-800"}`}>
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-base font-semibold text-slate-100">
+            <Activity className="w-5 h-5 text-cyan-500" />
+            <h2 className={`text-base font-semibold ${isLight ? "text-slate-900" : "text-slate-100"}`}>
               {t.motionTitle}
             </h2>
           </div>
           {!isRecording && (
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-slate-100 rounded-lg hover:bg-slate-800 transition-colors"
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                isLight ? "text-slate-500 hover:text-slate-900 hover:bg-slate-100" : "text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+              }`}
             >
               <X className="w-5 h-5" />
             </button>
@@ -112,19 +118,23 @@ export const AnimationModal: React.FC<Props> = ({
         </div>
 
         {/* LFO Modulation Engine */}
-        <div className="flex flex-col gap-3 bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+        <div className={`flex flex-col gap-3 p-4 rounded-xl border ${
+          isLight ? "bg-slate-50 border-slate-200" : "bg-slate-950/50 border-slate-800/80"
+        }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+              <Sliders className="w-4 h-4 text-cyan-500" />
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? "text-slate-800" : "text-slate-300"}`}>
                 {t.lfoTitle}
               </span>
             </div>
             <button
               onClick={() => onConfigureLfo({ enabled: !state.activeLfo.enabled, paramId: currentParamId })}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
                 state.activeLfo.enabled
-                  ? "bg-cyan-500 text-slate-950 font-semibold"
+                  ? "bg-cyan-500 text-slate-950 font-semibold shadow-sm"
+                  : isLight
+                  ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
                   : "bg-slate-800 text-slate-400 hover:text-slate-200"
               }`}
             >
@@ -135,7 +145,7 @@ export const AnimationModal: React.FC<Props> = ({
 
           {/* Select Target Parameter */}
           <div className="flex flex-col gap-1 mt-1">
-            <label className="text-[11px] font-medium text-slate-400">
+            <label className={`text-[11px] font-medium ${isLight ? "text-slate-500" : "text-slate-400"}`}>
               {t.targetParam}
             </label>
             <div className="grid grid-cols-2 gap-1.5">
@@ -143,9 +153,13 @@ export const AnimationModal: React.FC<Props> = ({
                 <button
                   key={param.id}
                   onClick={() => onConfigureLfo({ paramId: param.id, enabled: true })}
-                  className={`px-2.5 py-1.5 rounded text-xs text-left truncate transition-all border ${
+                  className={`px-2.5 py-1.5 rounded text-xs text-left truncate transition-all border cursor-pointer ${
                     currentParamId === param.id
-                      ? "bg-cyan-950/80 border-cyan-500 text-cyan-300 font-medium"
+                      ? isLight
+                        ? "bg-cyan-50 border-cyan-400 text-cyan-800 font-medium shadow-xs"
+                        : "bg-cyan-950/80 border-cyan-500 text-cyan-300 font-medium"
+                      : isLight
+                      ? "bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                       : "bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700"
                   }`}
                 >
@@ -156,16 +170,20 @@ export const AnimationModal: React.FC<Props> = ({
           </div>
 
           {/* Waveform Selector */}
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-800/80">
-            <span className="text-[11px] text-slate-400">{t.waveformOsc}</span>
+          <div className={`flex items-center justify-between mt-2 pt-2 border-t ${isLight ? "border-slate-200" : "border-slate-800/80"}`}>
+            <span className={`text-[11px] ${isLight ? "text-slate-500" : "text-slate-400"}`}>{t.waveformOsc}</span>
             <div className="flex items-center gap-1">
               {(["sine", "triangle", "sawtooth"] as const).map(wf => (
                 <button
                   key={wf}
                   onClick={() => onConfigureLfo({ waveform: wf })}
-                  className={`px-2 py-1 rounded text-xs capitalize transition-colors ${
+                  className={`px-2 py-1 rounded text-xs capitalize transition-colors cursor-pointer ${
                     state.activeLfo.waveform === wf
-                      ? "bg-cyan-950 border border-cyan-500 text-cyan-300 font-medium"
+                      ? isLight
+                        ? "bg-cyan-50 border border-cyan-400 text-cyan-800 font-medium"
+                        : "bg-cyan-950 border border-cyan-500 text-cyan-300 font-medium"
+                      : isLight
+                      ? "bg-white text-slate-600 hover:text-slate-900 border border-slate-200"
                       : "bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800"
                   }`}
                 >
@@ -178,9 +196,9 @@ export const AnimationModal: React.FC<Props> = ({
           {/* Speed & Amplitude Sliders */}
           <div className="grid grid-cols-2 gap-3 mt-2">
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-[11px] text-slate-400">
+              <div className={`flex justify-between text-[11px] ${isLight ? "text-slate-500" : "text-slate-400"}`}>
                 <span>{t.oscSpeed}</span>
-                <span className="font-mono tabular-nums text-cyan-400">{state.activeLfo.speed.toFixed(2)} Hz</span>
+                <span className={`font-mono tabular-nums ${isLight ? "text-cyan-700 font-semibold" : "text-cyan-400"}`}>{state.activeLfo.speed.toFixed(2)} Hz</span>
               </div>
               <input
                 type="range"
@@ -189,13 +207,13 @@ export const AnimationModal: React.FC<Props> = ({
                 step="0.05"
                 value={state.activeLfo.speed}
                 onChange={e => onConfigureLfo({ speed: parseFloat(e.target.value) })}
-                className="w-full h-1 bg-slate-900 rounded accent-cyan-400"
+                className={`w-full h-1 rounded accent-cyan-500 cursor-pointer ${isLight ? "bg-slate-200" : "bg-slate-900"}`}
               />
             </div>
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-[11px] text-slate-400">
+              <div className={`flex justify-between text-[11px] ${isLight ? "text-slate-500" : "text-slate-400"}`}>
                 <span>{t.ampRange}</span>
-                <span className="font-mono tabular-nums text-cyan-400">{state.activeLfo.amplitude.toFixed(2)}</span>
+                <span className={`font-mono tabular-nums ${isLight ? "text-cyan-700 font-semibold" : "text-cyan-400"}`}>{state.activeLfo.amplitude.toFixed(2)}</span>
               </div>
               <input
                 type="range"
@@ -204,18 +222,20 @@ export const AnimationModal: React.FC<Props> = ({
                 step="0.05"
                 value={state.activeLfo.amplitude}
                 onChange={e => onConfigureLfo({ amplitude: parseFloat(e.target.value) })}
-                className="w-full h-1 bg-slate-900 rounded accent-cyan-400"
+                className={`w-full h-1 rounded accent-cyan-500 cursor-pointer ${isLight ? "bg-slate-200" : "bg-slate-900"}`}
               />
             </div>
           </div>
         </div>
 
         {/* Video Recorder Section */}
-        <div className="flex flex-col gap-3 bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+        <div className={`flex flex-col gap-3 p-4 rounded-xl border ${
+          isLight ? "bg-slate-50 border-slate-200" : "bg-slate-950/50 border-slate-800/80"
+        }`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Video className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+              <Video className="w-4 h-4 text-cyan-500" />
+              <span className={`text-xs font-semibold uppercase tracking-wider ${isLight ? "text-slate-800" : "text-slate-300"}`}>
                 {t.videoRecorderTitle}
               </span>
             </div>
@@ -225,9 +245,11 @@ export const AnimationModal: React.FC<Props> = ({
                   key={s}
                   disabled={isRecording}
                   onClick={() => setRecordSeconds(s)}
-                  className={`px-2 py-0.5 rounded text-xs font-mono transition-colors ${
+                  className={`px-2 py-0.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                     recordSeconds === s
                       ? "bg-cyan-500 text-slate-950 font-bold"
+                      : isLight
+                      ? "bg-slate-200 text-slate-600 hover:text-slate-900"
                       : "bg-slate-800 text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -240,13 +262,13 @@ export const AnimationModal: React.FC<Props> = ({
           {/* Record Button & Progress */}
           {isRecording ? (
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between text-xs font-mono tabular-nums text-cyan-300">
+              <div className="flex justify-between text-xs font-mono tabular-nums text-cyan-600">
                 <span>{t.capturingProgress}</span>
                 <span>{recordProgress}%</span>
               </div>
-              <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div className={`w-full h-2 rounded-full overflow-hidden ${isLight ? "bg-slate-200" : "bg-slate-800"}`}>
                 <div
-                  className="h-full bg-cyan-400 transition-all duration-100"
+                  className="h-full bg-cyan-500 transition-all duration-100"
                   style={{ width: `${recordProgress}%` }}
                 />
               </div>
@@ -255,7 +277,7 @@ export const AnimationModal: React.FC<Props> = ({
             <div className="grid grid-cols-2 gap-3 mt-1">
               <button
                 onClick={handleRecordVideo}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-semibold text-xs transition-all shadow-lg shadow-cyan-950/50 cursor-pointer whitespace-nowrap"
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 text-slate-950 font-semibold text-xs transition-all shadow-md shadow-cyan-950/20 cursor-pointer whitespace-nowrap"
               >
                 <Video className="w-4 h-4" />
                 <span>{t.recordVideoBtn.replace("{s}", recordSeconds.toString())}</span>
@@ -265,7 +287,11 @@ export const AnimationModal: React.FC<Props> = ({
                   onTakeScreenshot();
                   onClose();
                 }}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition-all border border-slate-700 cursor-pointer whitespace-nowrap"
+                className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium text-xs transition-all border cursor-pointer whitespace-nowrap ${
+                  isLight
+                    ? "bg-white hover:bg-slate-100 text-slate-800 border-slate-300"
+                    : "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700"
+                }`}
               >
                 <Camera className="w-4 h-4" />
                 <span>{t.snapPngBtn}</span>

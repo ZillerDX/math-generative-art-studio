@@ -18,6 +18,8 @@ export interface Translations {
   snapshot: string;
   share: string;
   linkCopied: string;
+  darkMode: string;
+  lightMode: string;
 
   // Sidebar Controls
   tabControls: string;
@@ -100,6 +102,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     snapshot: "Capture PNG",
     share: "Share",
     linkCopied: "Link Copied!",
+    darkMode: "Dark Mode",
+    lightMode: "Light Mode",
     tabControls: "Controls",
     tabEquation: "Equation View",
     activeModel: "Active Equation Model",
@@ -170,6 +174,8 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     snapshot: "ถ่ายภาพ",
     share: "แชร์",
     linkCopied: "คัดลอกลิงก์แล้ว!",
+    darkMode: "โหมดมืด",
+    lightMode: "โหมดสว่าง",
     tabControls: "แผงควบคุม",
     tabEquation: "มุมมองสมการ",
     activeModel: "โมเดลสมการที่ใช้งาน",

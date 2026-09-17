@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { StudioState, MathCategory, PresetDef, Language } from "../types/studio";
+import type { StudioState, MathCategory, PresetDef, Language, ThemeMode } from "../types/studio";
 import { PRESETS, getPresetById } from "../presets/presetCatalog";
 import { decodeStudioState, encodeStudioState } from "./urlCodec";
 
@@ -33,7 +33,8 @@ export function useStudioState() {
       speed: decoded?.speed ?? initialPreset.speed,
       hoveredVar: null,
       activeVar: null,
-      lang: decoded?.lang || "th",
+      lang: decoded?.lang || "en",
+      theme: decoded?.theme || "dark",
       activeLfo: decoded?.activeLfo || (initialPreset.lfo ? {
         enabled: true,
         paramId: initialPreset.lfo.paramId,
@@ -181,6 +182,14 @@ export function useStudioState() {
     setState(prev => ({ ...prev, lang }));
   }, []);
 
+  const setTheme = useCallback((theme: ThemeMode) => {
+    setState(prev => ({ ...prev, theme }));
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setState(prev => ({ ...prev, theme: prev.theme === "dark" ? "light" : "dark" }));
+  }, []);
+
   return {
     state,
     baseParameters: baseParamRef.current,
@@ -196,6 +205,8 @@ export function useStudioState() {
     setActiveVar,
     configureLfo,
     resetCurrentParameters,
-    setLanguage
+    setLanguage,
+    setTheme,
+    toggleTheme
   };
 }

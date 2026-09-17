@@ -10,6 +10,7 @@ export interface SerializedState {
   pan: [number, number];
   spd: number; // speed
   lang?: "en" | "th";
+  theme?: "dark" | "light";
   lfo?: {
     en: boolean;
     id: string;
@@ -29,6 +30,7 @@ export function encodeStudioState(state: StudioState): string {
     pan: [Number(state.pan[0].toFixed(5)), Number(state.pan[1].toFixed(5))],
     spd: Number(state.speed.toFixed(2)),
     lang: state.lang,
+    theme: state.theme,
     ...(state.activeLfo.enabled
       ? {
           lfo: {
@@ -66,7 +68,8 @@ export function decodeStudioState(compressed: string): Partial<StudioState> | nu
       zoom: data.z || 1.0,
       pan: data.pan || [0, 0],
       speed: data.spd || 1.0,
-      lang: data.lang || "th",
+      lang: data.lang || "en",
+      theme: data.theme || "dark",
       ...(data.lfo
         ? {
             activeLfo: {

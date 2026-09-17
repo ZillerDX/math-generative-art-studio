@@ -31,10 +31,12 @@ export function App() {
     setActiveVar,
     configureLfo,
     resetCurrentParameters,
-    setLanguage
+    setLanguage,
+    toggleTheme
   } = useStudioState();
 
   const t = getTranslation(state.lang);
+  const isLight = state.theme === "light";
   const canvasHandleRef = useRef<CanvasHandle | null>(null);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isCustomMathOpen, setIsCustomMathOpen] = useState(false);
@@ -92,19 +94,20 @@ export function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 select-none">
+    <div className={`flex flex-col h-screen w-screen overflow-hidden select-none transition-colors ${
+      isLight ? "bg-slate-100 text-slate-900" : "bg-slate-950 text-slate-100"
+    }`}>
       {/* Top Application Bar */}
       <Header
         state={state}
-        onSelectCategory={setCategory}
         onOpenGallery={() => setIsGalleryOpen(true)}
         onOpenCustomMath={() => setIsCustomMathOpen(true)}
-        onOpenCalculator={() => setIsCalculatorOpen(true)}
         onOpenAnimationModal={() => setIsAnimationModalOpen(true)}
         onTakeScreenshot={handleTakeScreenshot}
         onTogglePause={togglePause}
         onResetParameters={resetCurrentParameters}
         onToggleLanguage={setLanguage}
+        onToggleTheme={toggleTheme}
       />
 
 
@@ -123,7 +126,11 @@ export function App() {
           {/* Toggle Sidebar Floating Handle */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="absolute top-4 right-4 z-20 p-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 backdrop-blur-md shadow-lg transition-all"
+            className={`absolute top-4 right-4 z-20 p-2 rounded-lg backdrop-blur-md shadow-lg transition-all cursor-pointer ${
+              isLight
+                ? "bg-white/95 hover:bg-slate-100 text-slate-700 border border-slate-300"
+                : "bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80"
+            }`}
             title={isSidebarOpen ? "Hide Instrument Panel" : "Show Instrument Panel"}
           >
             {isSidebarOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -132,17 +139,25 @@ export function App() {
 
         {/* Instrument & Mathematical Sidebar */}
         <aside
-          className={`h-full w-96 bg-slate-950/95 border-l border-slate-800 backdrop-blur-xl z-20 flex flex-col transition-all duration-300 ease-in-out shrink-0 ${
+          className={`h-full w-96 border-l backdrop-blur-xl z-20 flex flex-col transition-all duration-300 ease-in-out shrink-0 ${
+            isLight
+              ? "bg-white/95 border-slate-200 text-slate-900"
+              : "bg-slate-950/95 border-slate-800 text-slate-100"
+          } ${
             isSidebarOpen ? "translate-x-0" : "translate-x-full absolute right-0"
           }`}
         >
           {/* Sidebar Section Switcher Tabs */}
-          <div className="flex items-center border-b border-slate-800 px-4 pt-3 gap-2 bg-slate-900/40 shrink-0">
+          <div className={`flex items-center border-b px-4 pt-3 gap-2 shrink-0 ${
+            isLight ? "border-slate-200 bg-slate-50" : "border-slate-800 bg-slate-900/40"
+          }`}>
             <button
               onClick={() => setSidebarTab("controls")}
-              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap ${
+              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap cursor-pointer ${
                 sidebarTab === "controls"
-                  ? "border-cyan-400 text-cyan-300"
+                  ? "border-cyan-500 text-cyan-600 dark:text-cyan-300"
+                  : isLight
+                  ? "border-transparent text-slate-500 hover:text-slate-900"
                   : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
@@ -151,9 +166,11 @@ export function App() {
             </button>
             <button
               onClick={() => setSidebarTab("equation")}
-              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap ${
+              className={`flex items-center gap-1.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-all border-b-2 whitespace-nowrap cursor-pointer ${
                 sidebarTab === "equation"
-                  ? "border-cyan-400 text-cyan-300"
+                  ? "border-cyan-500 text-cyan-600 dark:text-cyan-300"
+                  : isLight
+                  ? "border-transparent text-slate-500 hover:text-slate-900"
                   : "border-transparent text-slate-400 hover:text-slate-200"
               }`}
             >
@@ -167,22 +184,28 @@ export function App() {
             {sidebarTab === "controls" ? (
               <>
                 {/* Active Preset Card */}
-                <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col gap-1.5">
+                <div className={`p-3.5 rounded-xl border flex flex-col gap-1.5 ${
+                  isLight ? "bg-slate-50 border-slate-200" : "bg-slate-900/80 border-slate-800"
+                }`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400">
+                    <span className={`text-[10px] font-mono uppercase tracking-wider ${
+                      isLight ? "text-cyan-700 font-semibold" : "text-cyan-400"
+                    }`}>
                       {t.activeModel}
                     </span>
                     <button
                       onClick={() => setIsGalleryOpen(true)}
-                      className="text-[11px] text-cyan-400 hover:text-cyan-300 hover:underline"
+                      className={`text-[11px] hover:underline cursor-pointer ${
+                        isLight ? "text-cyan-700 hover:text-cyan-800" : "text-cyan-400 hover:text-cyan-300"
+                      }`}
                     >
                       {t.browsePresets}
                     </button>
                   </div>
-                  <h3 className="font-semibold text-sm text-slate-100">
+                  <h3 className={`font-semibold text-sm ${isLight ? "text-slate-900" : "text-slate-100"}`}>
                     {currentPreset?.title}
                   </h3>
-                  <p className="text-xs text-slate-400 line-clamp-2">
+                  <p className={`text-xs line-clamp-2 ${isLight ? "text-slate-600" : "text-slate-400"}`}>
                     {currentPreset?.description}
                   </p>
                 </div>
@@ -190,6 +213,7 @@ export function App() {
                 {/* Equation Parameters */}
                 <ParameterPanel
                   lang={state.lang}
+                  theme={state.theme}
                   parameters={currentEquation.parameters}
                   values={state.parameters}
                   baseValues={baseParameters}
@@ -203,6 +227,7 @@ export function App() {
 
                 {/* Color Palette Selector */}
                 <ColorPalettePicker
+                  theme={state.theme}
                   currentPaletteId={state.palette}
                   onSelectPalette={setPalette}
                 />
@@ -211,6 +236,7 @@ export function App() {
               /* Dedicated Equation View */
               <EquationView
                 lang={state.lang}
+                theme={state.theme}
                 equation={currentEquation}
                 parameters={state.parameters}
                 hoveredVar={state.hoveredVar}
@@ -227,6 +253,7 @@ export function App() {
       <PresetGallery
         isOpen={isGalleryOpen}
         lang={state.lang}
+        theme={state.theme}
         activePresetId={state.presetId}
         onClose={() => setIsGalleryOpen(false)}
         onSelectPreset={loadPreset}
@@ -255,6 +282,7 @@ export function App() {
       <CustomMathModal
         isOpen={isCustomMathOpen}
         lang={state.lang}
+        theme={state.theme}
         parameters={currentEquation.parameters}
         activeParamId={state.activeVar || undefined}
         onClose={() => setIsCustomMathOpen(false)}
@@ -281,6 +309,7 @@ export function App() {
             </button>
             <MathCalculatorKeypad
               lang={state.lang}
+              theme={state.theme}
               parameters={currentEquation.parameters}
               activeParamId={state.activeVar || undefined}
               onApplyValueToParam={(paramId, val) => {
