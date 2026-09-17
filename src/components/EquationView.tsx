@@ -93,7 +93,7 @@ export const EquationView: React.FC<Props> = ({
         <div className={`text-[11px] font-medium uppercase tracking-wider ${isLight ? "text-slate-400" : "text-slate-500"}`}>
           {t.interactiveMatrixTitle}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-2.5">
           {equation.parameters.map(param => {
             const isHighlighted = hoveredVar === param.id || activeVar === param.id;
             const currentValue = parameters[param.id] ?? param.defaultValue;
@@ -107,27 +107,37 @@ export const EquationView: React.FC<Props> = ({
                 onMouseEnter={() => onHoverVar(param.id)}
                 onMouseLeave={() => onHoverVar(null)}
                 onClick={() => onSelectVar(param.id)}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-all border text-xs ${
+                className={`flex flex-col justify-between p-2.5 rounded-xl cursor-pointer transition-all border text-xs gap-1.5 ${
                   isHighlighted
                     ? isLight
                       ? "bg-cyan-50 border-cyan-400 text-cyan-900 ring-1 ring-cyan-400 shadow-md shadow-cyan-100"
                       : "bg-cyan-950/70 border-cyan-500 text-cyan-200 ring-1 ring-cyan-500 shadow-lg shadow-cyan-950/50"
                     : isLight
                     ? "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300"
-                    : "bg-slate-950/50 border-slate-800/90 text-slate-300 hover:bg-slate-800/50 hover:border-slate-700"
+                    : "bg-slate-950/60 border-slate-800/90 text-slate-300 hover:bg-slate-800/50 hover:border-slate-700"
                 }`}
               >
-                <div className="flex items-center gap-2">
+                {/* Top Row: LaTeX Symbol on left, Formatted Value on right */}
+                <div className="flex items-center justify-between gap-2">
                   <span
-                    className="font-serif text-sm font-medium"
+                    className="font-serif text-sm font-semibold"
                     dangerouslySetInnerHTML={{ __html: paramLatex }}
                   />
-                  <span className={`text-[11px] truncate max-w-[110px] ${isLight ? "text-slate-500" : "text-slate-400"}`}>
-                    {param.label}
+                  <span className={`font-mono tabular-nums text-xs font-bold shrink-0 ${
+                    isLight ? "text-cyan-700" : "text-cyan-400"
+                  }`}>
+                    {param.isInteger ? Math.round(currentValue) : currentValue.toFixed(3)}
                   </span>
                 </div>
-                <div className={`font-mono tabular-nums text-xs font-semibold ${isLight ? "text-cyan-700" : "text-cyan-400"}`}>
-                  {param.isInteger ? Math.round(currentValue) : currentValue.toFixed(3)}
+
+                {/* Bottom Row: Parameter Label with full breathing room */}
+                <div
+                  className={`text-[11px] font-medium truncate ${
+                    isLight ? "text-slate-500" : "text-slate-400"
+                  }`}
+                  title={param.label}
+                >
+                  {param.label}
                 </div>
               </div>
             );
