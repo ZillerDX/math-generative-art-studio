@@ -140,7 +140,7 @@ export const EquationView: React.FC<Props> = ({
         <div className={`mt-1 pt-3 border-t text-xs flex flex-col gap-1 ${isLight ? "border-slate-200 text-slate-600" : "border-slate-800/80 text-slate-400"}`}>
           <div className={`flex items-center gap-1.5 font-medium text-[11px] ${isLight ? "text-slate-800" : "text-slate-300"}`}>
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Mathematical Intuition</span>
+            <span>{t.mathIntuition}</span>
           </div>
           <ul className={`list-disc pl-4 space-y-1 text-[11px] ${isLight ? "text-slate-600" : "text-slate-400"}`}>
             {equation.pedagogicalNotes.map((note, idx) => (

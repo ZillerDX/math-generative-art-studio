@@ -210,7 +210,7 @@ export const Header: React.FC<Props> = ({
                 ? "text-slate-600 hover:text-slate-900"
                 : "text-slate-400 hover:text-slate-200"
             }`}
-            title="Switch language to English (Default)"
+            title={state.lang === "th" ? "สลับภาษาเป็นภาษาอังกฤษ (ค่าเริ่มต้น)" : "Switch language to English (Default)"}
           >
             EN
           </button>
@@ -223,7 +223,7 @@ export const Header: React.FC<Props> = ({
                 ? "text-slate-600 hover:text-slate-900"
                 : "text-slate-400 hover:text-slate-200"
             }`}
-            title="สลับภาษาเป็นภาษาไทย"
+            title={state.lang === "th" ? "สลับภาษาเป็นภาษาไทย" : "Switch language to Thai"}
           >
             TH
           </button>

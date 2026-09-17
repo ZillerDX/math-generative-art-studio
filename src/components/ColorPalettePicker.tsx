@@ -1,26 +1,30 @@
 import React from "react";
 import { COLOR_PALETTES } from "../presets/palettes";
-import type { ThemeMode } from "../types/studio";
+import type { Language, ThemeMode } from "../types/studio";
+import { getTranslation } from "../i18n/translations";
 import { Palette, Check } from "lucide-react";
 
 interface Props {
   theme?: ThemeMode;
+  lang?: Language;
   currentPaletteId: string;
   onSelectPalette: (id: string) => void;
 }
 
 export const ColorPalettePicker: React.FC<Props> = ({
   theme = "dark",
+  lang = "en",
   currentPaletteId,
   onSelectPalette
 }) => {
+  const t = getTranslation(lang);
   const isLight = theme === "light";
 
   return (
     <div className="flex flex-col gap-2.5">
       <div className={`flex items-center gap-2 pb-1 text-xs font-semibold uppercase tracking-wider ${isLight ? "text-slate-800" : "text-slate-300"}`}>
         <Palette className="w-4 h-4 text-cyan-500" />
-        <span>Shader Spectral Palette</span>
+        <span>{t.spectralPalette}</span>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

@@ -213,7 +213,9 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
               = {evaluatedResult.toFixed(5)}
             </span>
           ) : (
-            <span className="text-amber-500 text-[10px]">Evaluating...</span>
+            <span className="text-amber-500 text-[10px]">
+              {lang === "th" ? "กำลังคำนวณ..." : "Evaluating..."}
+            </span>
           )}
         </div>
 
@@ -286,7 +288,7 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
           {appliedNotification ? (
             <>
               <Check className="w-3.5 h-3.5" />
-              <span>Applied!</span>
+              <span>{lang === "th" ? "ส่งค่าแล้ว!" : "Applied!"}</span>
             </>
           ) : (
             <>

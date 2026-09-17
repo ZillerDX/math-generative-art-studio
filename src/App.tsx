@@ -228,6 +228,7 @@ export function App() {
                 {/* Color Palette Selector */}
                 <ColorPalettePicker
                   theme={state.theme}
+                  lang={state.lang}
                   currentPaletteId={state.palette}
                   onSelectPalette={setPalette}
                 />

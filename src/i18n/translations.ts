@@ -66,8 +66,26 @@ export interface Translations {
   applyMathBtn: string;
   applyStudioBtn: string;
   paradigmLabel: string;
+  paradigmRose: string;
+  paradigmFractal: string;
+  paradigmLissajous: string;
   livePreviewLabel: string;
   visualPredictionLabel: string;
+  builderNumerator: string;
+  builderDenominator: string;
+  builderAmplitude: string;
+  builderPhase: string;
+  builderLaserGlow: string;
+  builderFractalMode: string;
+  builderJuliaMode: string;
+  builderMandelMode: string;
+  builderPolyPower: string;
+  builderMaxIter: string;
+  builderRealConst: string;
+  builderImagConst: string;
+  builderFreqX: string;
+  builderFreqY: string;
+  builderPhaseDelta: string;
 
   // Calculator Keypad
   calcTitle: string;
@@ -142,8 +160,26 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     applyMathBtn: "Apply This Math",
     applyStudioBtn: "Apply to Studio",
     paradigmLabel: "Choose Mathematical Paradigm",
+    paradigmRose: "Rose Harmonograph",
+    paradigmFractal: "Complex Fractal",
+    paradigmLissajous: "Lissajous Knot",
     livePreviewLabel: "Live LaTeX Formula Preview",
     visualPredictionLabel: "Visual Outcome Prediction:",
+    builderNumerator: "Numerator n (Harmonic Petals):",
+    builderDenominator: "Denominator d (Revolutions):",
+    builderAmplitude: "Amplitude a (Scale):",
+    builderPhase: "Phase Offset \\phi (Angle):",
+    builderLaserGlow: "Laser Glow \\sigma_w:",
+    builderFractalMode: "Fractal Mode:",
+    builderJuliaMode: "Julia Constant Morphing",
+    builderMandelMode: "Mandelbrot Degree Power",
+    builderPolyPower: "Polynomial Power Exponent p:",
+    builderMaxIter: "Max Iterations N (Loop Depth):",
+    builderRealConst: "Real Constant C_r:",
+    builderImagConst: "Imaginary Constant C_i:",
+    builderFreqX: "Frequency X (a):",
+    builderFreqY: "Frequency Y (b):",
+    builderPhaseDelta: "Phase \\delta:",
     calcTitle: "Scientific Math Keypad",
     calcSubtitle: "Direct interactive calculator for functions, trigonometry, constants, and custom equations.",
     calcExpression: "Formula & Expression Buffer",
@@ -214,8 +250,26 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     applyMathBtn: "สร้างผลงานจากสมการนี้",
     applyStudioBtn: "ประมวลผลเข้าสู่สตูดิโอ",
     paradigmLabel: "เลือกประเภทสมการคณิตศาสตร์",
+    paradigmRose: "ฮาร์โมโนกราฟกุหลาบ",
+    paradigmFractal: "แฟร็กทัลเชิงซ้อน",
+    paradigmLissajous: "ปมคลื่นลิสซาจูส์",
     livePreviewLabel: "สมการคณิตศาสตร์ที่กำลังสร้าง (Live LaTeX)",
     visualPredictionLabel: "การทำนายผลลัพธ์ภาพ:",
+    builderNumerator: "เศษ n (จำนวนกลีบฮาร์มอนิก):",
+    builderDenominator: "ส่วน d (รอบการหมุน):",
+    builderAmplitude: "แอมพลิจูด a (ขนาดสเกล):",
+    builderPhase: "มุมเฟส \\phi (ออฟเซ็ต):",
+    builderLaserGlow: "ความเรืองแสงเลเซอร์ \\sigma_w:",
+    builderFractalMode: "โหมดแฟร็กทัล:",
+    builderJuliaMode: "การแปลงค่าคงที่จูเลีย",
+    builderMandelMode: "กำลังพหุนามแมนเดลบรอต",
+    builderPolyPower: "เลขชี้กำลังพหุนาม p:",
+    builderMaxIter: "จำนวนรอบสูงสุด N (ความลึก):",
+    builderRealConst: "ค่าคงที่ส่วนจริง C_r:",
+    builderImagConst: "ค่าคงที่ส่วนจินตภาพ C_i:",
+    builderFreqX: "ความถี่แกน X (a):",
+    builderFreqY: "ความถี่แกน Y (b):",
+    builderPhaseDelta: "มุมเฟส \\delta:",
     calcTitle: "แป้นพิมพ์เครื่องคิดเลขวิทยาศาสตร์",
     calcSubtitle: "เครื่องคิดเลขปฏิสัมพันธ์โดยตรงสำหรับฟังก์ชั่น ตรีโกณมิติ ค่าคงที่ และสมการปรับแต่ง",
     calcExpression: "บัฟเฟอร์สูตรและนิพจน์คณิตศาสตร์",
