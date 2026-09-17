@@ -52,7 +52,7 @@ export const MathCalculatorKeypad: React.FC<Props> = ({
         .replace(/\^/g, "**");
 
       // Validate only safe arithmetic tokens
-      if (/[^0-9\+\-\*\/\(\)\.\s,eMathPIsqrtabscotang\*\*]/.test(sanitized)) {
+      if (/[^0-9+\-*/().\s,eMathPIsqrtabscotang]/.test(sanitized)) {
         return null;
       }
 

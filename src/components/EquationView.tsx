@@ -36,7 +36,7 @@ export const EquationView: React.FC<Props> = ({
         displayMode: true,
         throwOnError: false
       });
-    } catch (e) {
+    } catch {
       return equation.latex;
     }
   }, [equation.latex]);
